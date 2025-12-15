@@ -4,12 +4,6 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      groups:
-        # Add your App Store Connect API key credentials (APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
-        # or your Apple Developer Portal credentials (APPLE_ID, APPLE_ID_PASS, APPLE_TEAM_ID) in the following link:
-        # https://codemagic.io/settings/teams/account/groups
-        # Then uncomment the line below to use them in your workflow
-        # - app_store_credentials
       vars:
         XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
         XCODE_SCHEME: "Fast Bird"
