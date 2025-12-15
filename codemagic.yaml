@@ -11,24 +11,19 @@ workflows:
         # Then uncomment the line below to use them in your workflow
         # - app_store_credentials
       vars:
-        XCODE_WORKSPACE: "Fast Bird/Fast Bird.xcodeproj/project.xcworkspace"
+        XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
         XCODE_SCHEME: "Fast Bird"
         BUNDLE_ID: "com.henquick.birdfast.Fast-Bird"
         APP_ID: 1234567890 # Replace with your App Store Connect App ID
       xcode: latest
-      cocoapods: default
     scripts:
       - name: Set up code signing settings on Xcode project
         script: |
           xcode-project use-profiles
-      - name: Install CocoaPods dependencies
-        script: |
-          cd Fast\ Bird
-          pod install
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
+            --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
             --codesigning-files-path "$CM_BUILD_DIR/certificates" \
             --output "$CM_BUILD_DIR"
