@@ -1,0 +1,54 @@
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        # Add your App Store Connect API key credentials (APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY)
+        # or your Apple Developer Portal credentials (APPLE_ID, APPLE_ID_PASS, APPLE_TEAM_ID) in the following link:
+        # https://codemagic.io/settings/teams/account/groups
+        # Then uncomment the line below to use them in your workflow
+        # - app_store_credentials
+      vars:
+        XCODE_WORKSPACE: "Fast Bird/Fast Bird.xcodeproj/project.xcworkspace"
+        XCODE_SCHEME: "Fast Bird"
+        BUNDLE_ID: "com.henquick.birdfast.Fast-Bird"
+        APP_ID: 1234567890 # Replace with your App Store Connect App ID
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles
+      - name: Install CocoaPods dependencies
+        script: |
+          cd Fast\ Bird
+          pod install
+      - name: Build ipa for distribution
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME" \
+            --codesigning-files-path "$CM_BUILD_DIR/certificates" \
+            --output "$CM_BUILD_DIR"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+    publishing:
+      email:
+        recipients:
+          - user@example.com # Replace with your email
+        notify:
+          success: true
+          failure: false
+      # Uncomment to publish to App Store Connect
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
+      #   beta_groups:
+      #     - group name 1
+      #     - group name 2
+
