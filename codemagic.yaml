@@ -17,13 +17,27 @@ workflows:
     scripts:
       - name: Build ipa for distribution
         script: |
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --export-options-plist export_options.plist
+          # Создаем директории для артефактов
+          mkdir -p build/ipa
+          
+          # Собираем архив с автоматической подписью
+          xcodebuild clean archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath build/archive.xcarchive \
+            -configuration Release \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER=""
+          
+          # Экспортируем IPA для App Store
+          xcodebuild -exportArchive \
+            -archivePath build/archive.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist export_options.plist
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - build/ipa/*.ipa
+      - build/archive.xcarchive
     publishing:
       email:
         recipients:
