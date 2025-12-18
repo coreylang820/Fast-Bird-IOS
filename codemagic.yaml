@@ -24,8 +24,7 @@ workflows:
     publishing:
       email:
         recipients:
-          # ЗАМЕНИТЕ на ваш email для получения уведомлений о сборке
-          - user@example.com
+          - rikzwanenburg@icloud.com
         notify:
           success: true
           failure: true
