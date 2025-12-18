@@ -20,15 +20,15 @@ workflows:
           # Создаем директории для артефактов
           mkdir -p build/ipa
           
-          # Собираем архив с автоматической подписью
+          # Собираем архив с автоматической подписью через App Store Connect API
           xcodebuild clean archive \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -archivePath build/archive.xcarchive \
             -configuration Release \
             CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM="" \
-            PROVISIONING_PROFILE_SPECIFIER=""
+            DEVELOPMENT_TEAM="$APP_STORE_CONNECT_TEAM_ID" \
+            -allowProvisioningUpdates
           
           # Экспортируем IPA для App Store
           xcodebuild -exportArchive \
