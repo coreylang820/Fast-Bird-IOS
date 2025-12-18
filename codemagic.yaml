@@ -28,7 +28,8 @@ workflows:
           # Используем стандартные команды xcodebuild с автоматической подписью
           mkdir -p build/ipa
           
-          # Собираем архив
+          # Собираем архив с автоматической подписью
+          # Codemagic автоматически выберет правильный тип подписи (Development/Distribution)
           xcodebuild clean archive \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
@@ -36,7 +37,6 @@ workflows:
             -configuration Release \
             CODE_SIGN_STYLE=Automatic \
             DEVELOPMENT_TEAM="$APPLE_DEVELOPER_TEAM_ID" \
-            CODE_SIGN_IDENTITY="Apple Distribution" \
             -allowProvisioningUpdates
           
           # Экспортируем IPA
