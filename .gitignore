@@ -95,5 +95,10 @@ iOSInjectionProject/
 *.token
 config.local.json
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
 
 
