@@ -12,6 +12,7 @@ workflows:
         XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
         XCODE_SCHEME: "Fast Bird"
         BUNDLE_ID: "com.henquick.birdfast.Fast-Bird"
+        APPLE_DEVELOPER_TEAM_ID: "ZQ6FZ3T2BY"
       xcode: latest
       cocoapods: default
     scripts:
@@ -21,13 +22,13 @@ workflows:
           mkdir -p build/ipa
           
           # Собираем архив с автоматической подписью через App Store Connect API
-          # Codemagic автоматически настроит подпись при использовании App Store Connect интеграции
           xcodebuild clean archive \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -archivePath build/archive.xcarchive \
             -configuration Release \
             CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM="$APPLE_DEVELOPER_TEAM_ID" \
             -allowProvisioningUpdates
           
           # Экспортируем IPA для App Store
