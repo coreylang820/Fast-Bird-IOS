@@ -21,13 +21,13 @@ workflows:
           mkdir -p build/ipa
           
           # Собираем архив с автоматической подписью через App Store Connect API
+          # Codemagic автоматически настроит подпись при использовании App Store Connect интеграции
           xcodebuild clean archive \
             -project "$XCODE_PROJECT" \
             -scheme "$XCODE_SCHEME" \
             -archivePath build/archive.xcarchive \
             -configuration Release \
             CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM="$APP_STORE_CONNECT_TEAM_ID" \
             -allowProvisioningUpdates
           
           # Экспортируем IPA для App Store
