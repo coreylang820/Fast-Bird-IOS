@@ -30,8 +30,8 @@ workflows:
           failure: true
       # Автоматическая загрузка в App Store Connect через API ключ
       app_store_connect:
-        # Используем API ключ, который вы добавили в настройках Codemagic
-        auth: api_key
+        # Используем интеграцию с App Store Connect (API ключ настраивается в интерфейсе Codemagic)
+        auth: integration
         # Автоматическая загрузка в TestFlight после успешной сборки
         submit_to_testflight: true
         # Группы тестировщиков для TestFlight (опционально, можно добавить позже)
