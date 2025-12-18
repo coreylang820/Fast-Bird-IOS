@@ -1,0 +1,56 @@
+workflows:
+  ios-workflow-alternative:
+    name: Fastest Bird iOS (Alternative)
+    max_build_duration: 120
+    instance_type: mac_mini_m1
+    environment:
+      groups:
+        # Добавьте ваши группы с сертификатами здесь
+        # - app_store_credentials
+      vars:
+        XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
+        XCODE_SCHEME: "Fast Bird"
+        BUNDLE_ID: "com.henquick.birdfast.Fast-Bird"
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles \
+            --project "$XCODE_PROJECT"
+      - name: Build ipa for distribution using xcodebuild
+        script: |
+          # Создаем директорию для артефактов
+          mkdir -p build/ipa
+          
+          # Собираем архив
+          xcodebuild clean archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath build/archive.xcarchive \
+            -configuration Release \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+          
+          # Экспортируем IPA
+          xcodebuild -exportArchive \
+            -archivePath build/archive.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist exportOptions.plist || \
+          xcodebuild -exportArchive \
+            -archivePath build/archive.xcarchive \
+            -exportPath build/ipa \
+            -exportMethod app-store
+    artifacts:
+      - build/ipa/*.ipa
+      - build/archive.xcarchive
+    publishing:
+      email:
+        recipients:
+          - user@example.com  # Замените на ваш email
+        notify:
+          success: true
+          failure: false
+
+
