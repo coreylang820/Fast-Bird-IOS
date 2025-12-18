@@ -19,6 +19,7 @@ workflows:
         script: |
           xcode-project use-profiles \
             --project "$XCODE_PROJECT" \
+            --bundle-id "$BUNDLE_ID" \
             --type app-store
       - name: Build ipa for distribution
         script: |
