@@ -16,21 +16,33 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up automatic code signing
+      - name: Set up code signing with App Store Connect API
         script: |
-          # Настраиваем подпись через App Store Connect API
-          # Команда автоматически найдет и применит профили через API
-          xcode-project use-profiles --project "$XCODE_PROJECT" || true
+          # Codemagic автоматически управляет сертификатами и профилями через App Store Connect API
+          # Настраиваем проект для использования автоматической подписи
+          xcode-project use-profiles --project "$XCODE_PROJECT"
       - name: Build ipa for distribution
         script: |
-          # Используем команду Codemagic, которая автоматически управляет подписью
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --export-options-plist export_options.plist
+          # Собираем IPA используя стандартные команды xcodebuild
+          # Codemagic автоматически предоставит необходимые сертификаты и профили
+          mkdir -p build/ipa
+          
+          xcodebuild clean archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath build/archive.xcarchive \
+            -configuration Release \
+            CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM="$APPLE_DEVELOPER_TEAM_ID" \
+            -allowProvisioningUpdates
+          
+          xcodebuild -exportArchive \
+            -archivePath build/archive.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist export_options.plist
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - build/ipa/*.ipa
+      - build/archive.xcarchive
     publishing:
       email:
         recipients:
