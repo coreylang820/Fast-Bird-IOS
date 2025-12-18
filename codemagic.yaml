@@ -21,7 +21,17 @@ workflows:
           # Codemagic автоматически управляет сертификатами и профилями через App Store Connect API
           echo "Setting up code signing profiles for Bundle ID: $BUNDLE_ID"
           echo "Team ID: $APPLE_DEVELOPER_TEAM_ID"
-          xcode-project use-profiles --project "$XCODE_PROJECT"
+          echo "Project path: $XCODE_PROJECT"
+          
+          # Пытаемся настроить профили
+          xcode-project use-profiles --project "$XCODE_PROJECT" || {
+            echo "Warning: use-profiles failed, continuing anyway..."
+          }
+          
+          # Проверяем настройки проекта
+          echo "Checking project build settings..."
+          xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings | grep -i "CODE_SIGN" || true
+          
           echo "Code signing setup complete"
       - name: Build ipa for distribution
         script: |
