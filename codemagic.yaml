@@ -19,8 +19,8 @@ workflows:
       - name: Set up automatic code signing
         script: |
           # Настраиваем подпись через App Store Connect API
-          xcode-project use-profiles \
-            --project "$XCODE_PROJECT"
+          # Команда автоматически найдет и применит профили через API
+          xcode-project use-profiles --project "$XCODE_PROJECT" || true
       - name: Build ipa for distribution
         script: |
           # Используем команду Codemagic, которая автоматически управляет подписью
