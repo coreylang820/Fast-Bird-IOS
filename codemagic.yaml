@@ -4,42 +4,38 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
-      groups:
-        # Добавьте ваши группы с сертификатами здесь
-        # - app_store_credentials
+      # Группы больше не нужны, так как используется App Store Connect API
+      groups: []
       vars:
-        XCODE_WORKSPACE: "Fast Bird/Fast Bird.xcodeproj"
+        XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
         XCODE_SCHEME: "Fast Bird"
         BUNDLE_ID: "com.henquick.birdfast.Fast-Bird"
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up code signing settings on Xcode project
-        script: |
-          xcode-project use-profiles \
-            --project "Fast Bird/Fast Bird.xcodeproj"
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
-            --project "Fast Bird/Fast Bird.xcodeproj" \
-            --scheme "Fast Bird"
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.ipa
     publishing:
       email:
         recipients:
-          - user@example.com  # Замените на ваш email
+          # ЗАМЕНИТЕ на ваш email для получения уведомлений о сборке
+          - user@example.com
         notify:
           success: true
-          failure: false
-      # Раскомментируйте для автоматической загрузки в App Store Connect
-      # app_store_connect:
-      #   auth: integration
-      #   submit_to_testflight: true
-      #   beta_groups:
-      #     - group name 1
-      #     - group name 2
-
+          failure: true
+      # Автоматическая загрузка в App Store Connect через API ключ
+      app_store_connect:
+        # Используем API ключ, который вы добавили в настройках Codemagic
+        auth: api_key
+        # Автоматическая загрузка в TestFlight после успешной сборки
+        submit_to_testflight: true
+        # Группы тестировщиков для TestFlight (опционально, можно добавить позже)
+        # beta_groups:
+        #   - "Testers"
+        #   - "Internal Testers"
