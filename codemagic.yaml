@@ -15,6 +15,11 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Set up code signing settings on Xcode project
+        script: |
+          xcode-project use-profiles \
+            --project "$XCODE_PROJECT" \
+            --type app-store
       - name: Build ipa for distribution
         script: |
           xcode-project build-ipa \
