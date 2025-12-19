@@ -4,7 +4,7 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m1
     integrations:
-      app_store_connect: fast_bird_apple_api_key
+      app_store_connect: fast_bird_admin_key
     environment:
       # Группы больше не нужны, так как используется App Store Connect API
       groups: []
