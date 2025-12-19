@@ -16,47 +16,17 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
-      - name: Set up code signing with App Store Connect API
-        script: |
-          # Codemagic автоматически управляет сертификатами и профилями через App Store Connect API
-          echo "Setting up code signing profiles for Bundle ID: $BUNDLE_ID"
-          echo "Team ID: $APPLE_DEVELOPER_TEAM_ID"
-          echo "Project path: $XCODE_PROJECT"
-          
-          # Пытаемся настроить профили
-          xcode-project use-profiles --project "$XCODE_PROJECT" || {
-            echo "Warning: use-profiles failed, continuing anyway..."
-          }
-          
-          # Проверяем настройки проекта
-          echo "Checking project build settings..."
-          xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings | grep -i "CODE_SIGN" || true
-          
-          echo "Code signing setup complete"
       - name: Build ipa for distribution
         script: |
-          # Используем стандартные команды xcodebuild с автоматической подписью
-          mkdir -p build/ipa
-          
-          # Собираем архив с автоматической подписью
-          # Codemagic автоматически выберет правильный тип подписи (Development/Distribution)
-          xcodebuild clean archive \
-            -project "$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -archivePath build/archive.xcarchive \
-            -configuration Release \
-            CODE_SIGN_STYLE=Automatic \
-            DEVELOPMENT_TEAM="$APPLE_DEVELOPER_TEAM_ID" \
-            -allowProvisioningUpdates
-          
-          # Экспортируем IPA
-          xcodebuild -exportArchive \
-            -archivePath build/archive.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist export_options.plist
+          # Используем команду Codemagic которая автоматически управляет подписью через App Store Connect API
+          # Команда build-ipa сама настроит профили и сертификаты через API ключ
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME" \
+            --export-options-plist export_options.plist
     artifacts:
-      - build/ipa/*.ipa
-      - build/archive.xcarchive
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
     publishing:
       email:
         recipients:
