@@ -10,8 +10,6 @@
 	<true/>
 	<key>compileBitcode</key>
 	<false/>
-	<key>signingStyle</key>
-	<string>automatic</string>
 	<key>teamID</key>
 	<string>ZQ6FZ3T2BY</string>
 </dict>
