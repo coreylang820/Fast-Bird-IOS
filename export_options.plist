@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>method</key>
-	<string>app-store</string>
+	<string>app-store-connect</string>
 	<key>uploadBitcode</key>
 	<false/>
 	<key>uploadSymbols</key>
@@ -12,6 +12,13 @@
 	<false/>
 	<key>teamID</key>
 	<string>ZQ6FZ3T2BY</string>
+	<key>signingStyle</key>
+	<string>manual</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>com.henquick.birdfast.Fast-Bird</key>
+		<string>profile_for_p12</string>
+	</dict>
 </dict>
 </plist>
 
