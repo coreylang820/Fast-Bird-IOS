@@ -38,14 +38,25 @@ workflows:
           xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" -showBuildSettings | grep -i "PROVISIONING_PROFILE\|CODE_SIGN" | head -10 || true
       - name: Build ipa for distribution
         script: |
-          # Используем команду build-ipa которая должна правильно настроить подпись
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --export-options-plist export_options.plist
+          # Собираем архив
+          mkdir -p build/ipa
+          
+          xcodebuild clean archive \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -archivePath build/archive.xcarchive \
+            -configuration Release \
+            DEVELOPMENT_TEAM="$APPLE_DEVELOPER_TEAM_ID"
+          
+          # Экспортируем IPA с явным указанием профиля
+          xcodebuild -exportArchive \
+            -archivePath build/archive.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist export_options.plist \
+            -allowProvisioningUpdates
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
+      - build/ipa/*.ipa
+      - build/archive.xcarchive
     publishing:
       email:
         recipients:
