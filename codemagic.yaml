@@ -19,9 +19,17 @@ workflows:
     scripts:
       - name: Set up code signing
         script: |
+          # Настраиваем подпись через загруженные сертификаты
+          echo "Setting up code signing with uploaded certificates..."
           xcode-project use-profiles --project "$XCODE_PROJECT"
+          echo "Code signing setup complete"
+          
+          # Проверяем, что профили установлены
+          echo "Checking installed provisioning profiles..."
+          ls -la ~/Library/MobileDevice/Provisioning\ Profiles/ || echo "No profiles found in default location"
       - name: Build ipa for distribution
         script: |
+          # Используем команду build-ipa которая должна правильно настроить подпись
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
