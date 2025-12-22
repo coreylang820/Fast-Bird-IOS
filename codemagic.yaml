@@ -6,8 +6,9 @@ workflows:
     integrations:
       app_store_connect: fast_bird_admin_key
     environment:
-      # Группы больше не нужны, так как используется App Store Connect API
-      groups: []
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.henquick.birdfast.Fast-Bird
       vars:
         XCODE_PROJECT: "Fast Bird/Fast Bird.xcodeproj"
         XCODE_SCHEME: "Fast Bird"
@@ -16,10 +17,11 @@ workflows:
       xcode: latest
       cocoapods: default
     scripts:
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles --project "$XCODE_PROJECT"
       - name: Build ipa for distribution
         script: |
-          # Используем команду Codemagic которая автоматически управляет подписью через App Store Connect API
-          # Команда build-ipa сама настроит профили и сертификаты через API ключ
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
